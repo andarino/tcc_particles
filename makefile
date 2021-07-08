@@ -1,15 +1,17 @@
-TARGET=tt
-CPUCC=gcc
-LFLAGS=-lgsl -lgslcblas
-LIBS= -lm
-LD=gcc
-CPU_COMPILE = $(CPUCC) $(LFLAGS)
-R=rm -r dowloading_wall_resitution.o
-all: main 
-	$(CPU_COMPILE) dowloading_wall_resitution.o $(LIBS)  -o $(TARGET); $(R)
-main:
-	$(CPU_COMPILE) -c dowloading_wall_resitution.c
-clean: 
-	rm -rf tt
-	
-	
+OUTPUT=dowloading_wall_restitution_OMP
+
+CC=gcc
+CC_OPT=-std=c11
+
+CC_PTH=-lgsl -lgslcblas -lm
+
+.PHONY: all
+all: $(OUTPUT)
+
+$(OUTPUT): $(OUTPUT).c
+	$(CC) $(OUTPUT).c -o $(OUTPUT) $(CC_OPT) $(CC_PTH) 
+
+.PHONY: clean
+clean:
+	rm $(OUTPUT)
+
