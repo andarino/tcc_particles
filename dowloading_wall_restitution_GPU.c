@@ -253,12 +253,6 @@ int func (double t,const double y[],double f[],void *params)
 
   i=3*_grain_layer; //QUANTIDADE DE GRAOS INICIAIS
 
-
-//todas as threads estao percorrendo o mesmo laco
-//  #pragma omp parallel private(k, j, p, l) shared(edo_params, full_forceX, full_forceY) firstprivate(_num_layer, _grain_layer)
-//Permite que você especifique que uma seção de código deve ser executada em um único thread, não necessariamente o thread mestre
-//  #pragma omp single
-  //    {
   for (k = 1; k < _num_layer; k++)	//camada dos grãos principais
     {
       p=(k-1)*(2*_grain_layer+1)+1;
@@ -266,16 +260,10 @@ int func (double t,const double y[],double f[],void *params)
 
       for (j = 0; j < _grain_layer; j++)
 	         {
-	          //  #pragma omp task
 	            interaction(x,&edo_params,p,l,full_forceX,full_forceY,i); //0=alfa
-	            i++;p++;l++; //incrementadas pela thread 0
-              //a variavel i, causa segmentation fault
-   	        }
-
+	            i++;p++;l++; 
       i+=5*_grain_layer-1;
     }
-  //} //omp single
-
 
   //printf("-------------------------------------------\n");
 
@@ -359,22 +347,17 @@ int func (double t,const double y[],double f[],void *params)
   l = p= 1;
   //  printf("\ngraos principais em uma MESMA camada\n");
 
- #pragma omp parallel private(k, j) shared(edo_params, full_forceX, full_forceY) firstprivate(x, _num_layer, _grain_layer)
- #pragma omp single
- {
   for (k = 1; k < (_num_layer + 1); k++)	//k é o número de camadas
     {
       for (j = 0; j < _grain_layer-1; j++)
 	{
-    #pragma omp task
     interaction(x,&edo_params,l+j,l+j+1,full_forceX,full_forceY,p); //0=alfa
-    #pragma omp atomic
     p++;
   }//printf("\n");
       p+= 5*_grain_layer;
       l=k*(2*_grain_layer+1)+1;
     }//exit(1);
-}
+
   //printf("-------------------------------------------\n");
 
   //PARA A PAREDE DE CIMA
