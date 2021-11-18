@@ -25,6 +25,9 @@
 #include <gsl/gsl_odeiv.h>
 #include <unistd.h>		//para rodar o gnuplot
 #include <omp.h>
+#include <time.h>
+
+clock_t start, finish;
 
 int _num_layer,_grain_layer;	//número de camadas e número de grãos em cada camada
 double _q,RESTITUTION,DOWLOADING_WALL;
@@ -338,19 +341,20 @@ int func (double t,const double y[],double f[],void *params)//4th ruge?
 
   l = p= 1;
 
-  #pragma omp parallel private(k, j) shared(edo_params, full_forceX, full_forceY) firstprivate(x, _num_layer, _grain_layer)
-  #pragma omp single
-  {
-  //  printf("\ngraos principais em uma MESMA camada\n");
+ #pragma omp parallel private(k, j) shared(edo_params, full_forceX, full_forceY) firstprivate(x, _num_layer, _grain_layer)
+ #pragma omp single
+{
+
   for (k = 1; k < (_num_layer + 1); k++)	//k é o número de camadas
     {
+ #pragma omp taskloop 
       for (j = 0; j < _grain_layer-1; j++)
 	{
     #pragma omp task
     interaction(x,&edo_params,l+j,l+j+1,full_forceX,full_forceY,p); //0=alfa
 
-    #pragma omp atomic
-    p++;}//printf("\n");
+    p++;
+  }//printf("\n");
       p+= 5*_grain_layer;
       l=k*(2*_grain_layer+1)+1;
     }//exit(1);
@@ -781,9 +785,9 @@ int main (int argc, char **argv)
   fclose(sequence2);
 
   double WALL_TOP;
-//  while (t <= Tmax)
-//#pragma omp parallel for
-for(int t = 0.; t<= Tmax; t += h )
+
+  start = clock();
+  while (t <= Tmax)
 {
       /*********************** DOWLOADING WALL *********************/
       if ((ciclo%(int) verify_wall)==0)
@@ -1030,7 +1034,7 @@ for(int t = 0.; t<= Tmax; t += h )
 
           if(RESTITUTION<=0.01)break;
 	}
-//COLOCAR UM CLOCK
+
       int status
 	= gsl_odeiv_step_apply (s, t, h, x, x_err, dydt_in, dydt_out, &sys);
       // passo do rk
@@ -1044,7 +1048,9 @@ for(int t = 0.; t<= Tmax; t += h )
 
     }
 
-
+    finish = clock();
+    double p_time = (double)((finish-start))/CLOCKS_PER_SEC;
+    printf("the-time -> %f\n", p_time );
   ////////////////////////////////////////////////////////////////////
   /////////////////// GERANDO VIDEO PELO GNUPLOT /////////////////////
   ////////////////////////////////////////////////////////////////////
@@ -1072,38 +1078,6 @@ for(int t = 0.; t<= Tmax; t += h )
 
   fprintf(video,"load \'sequencia_%dx%d.plot\'\n\n",_num_layer,_grain_layer);
 
-/*  sprintf(name4, "sequencia.plot");
-  sequence2 = fopen(name4,"w+");
-  for(n=n_inicial;n<num;n++)
-    {
-      fprintf(sequence2,
-	      "plot \"./%d_random_square_q%g_%dx%d.dat\"using 1:2:3:3 with circles lc palette lw 2 lt 1\n",n,_q,_num_layer,_grain_layer);
-
-      fprintf(sequence2,
-	      "set arrow from %g,%g to %g,%g nohead\n\n",
-     1.,(b[1]+radii[1])/radii[0],1.,(b[_grain_layer]-radii[_grain_layer])/radii[0]);
-
-      fprintf(sequence2,
-	      "set arrow from %g,%g to %g,%g nohead\n\n",
-     1.,(b[1]+radii[1])/radii[0],INITIAL_WALL/radii[0],(b[1]+radii[1])/radii[0]);
-
-      fprintf(sequence2,
-	      "set arrow from %g,%g to %g,%g nohead\n\n",
-     1.,(b[_grain_layer]-radii[_grain_layer])/radii[0],INITIAL_WALL/radii[0],
-     (b[_grain_layer]-radii[_grain_layer])/radii[0]);
-
-      fprintf(sequence2,
-	      "set arrow from %g,%g to %g,%g nohead\n\n",
-     INITIAL_WALL/radii[0],(b[_grain_layer]-radii[_grain_layer])/radii[0],
-     INITIAL_WALL/radii[0],(b[1]+radii[1])/radii[0]);
-
-      fprintf(sequence2,
-	      "set arrow from %g,%g to %g,%g nohead lc 1\n\n",
-     DOWLOADING_WALL/radii[0],(b[_grain_layer]-radii[_grain_layer])/radii[0],
-     DOWLOADING_WALL/radii[0],(b[1]+radii[1])/radii[0]);
-
-      fprintf(sequence2,"pause 1\n\n");
-    }*/
 
   ////////////////////////////////////////////////////////////////////
   /////////////////// GERANDO 'GIF' PELO GNUPLOT /////////////////////
