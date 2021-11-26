@@ -7,4 +7,4 @@ Projeto em física de partículas para paralelizar.
 
 > ./dowloading_wall_restitution_OMP 0.001 8 10 0.09
 
-: gprof  --flat-profile ./dowloading_wall_restitution_OMP
+> gprof  --flat-profile ./dowloading_wall_restitution_OMP
