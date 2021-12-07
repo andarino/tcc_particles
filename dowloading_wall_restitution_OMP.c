@@ -347,7 +347,7 @@ void interaction (const double *x, void *params,int n1, int n2,
                 {
                   //  #pragma omp taskloop  private(k, j) shared(edo_params, full_forceX, full_forceY) firstprivate(x, _num_layer, _grain_layer)
 
-                      #pragma omp taskloop grainsize(1) nogroup
+                      #pragma omp taskloop grainsize(1)
                       for (j = 0; j < _grain_layer-1; j++){
                           #pragma omp task
                           interaction(x,&edo_params,l+j,l+j+1,full_forceX,full_forceY,p); //0=alfa
