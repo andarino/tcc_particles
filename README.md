@@ -8,4 +8,4 @@ libgsl-dev;
 
 > ./autotestes.sh -std=c11 -lgsl -lgslcblas -lm -pg
 
-Nota: os parâmetros na execução do script são passados para a compilação do arquivo dowloading_wall_restitution_GPU.c
+Nota: os parâmetros usado na execução do script são passados para a compilação do arquivo dowloading_wall_restitution_GPU.c
