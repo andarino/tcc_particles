@@ -26,10 +26,6 @@
 #include <unistd.h>		//para rodar o gnuplot
 #include <time.h>
 
-clock_t start, finish;
-
-
-
 int _num_layer,_grain_layer;	//número de camadas e número de grãos em cada camada
 double _q,RESTITUTION,DOWLOADING_WALL;
 
@@ -556,7 +552,13 @@ void energy_temporary_wall(const double *y,void *params,int n_bottom,
 
 int main (int argc, char **argv)
 {
- int n, k, i, j, l, p;
+
+clock_t start, end;
+double cpu_time_used;
+
+start = clock();
+
+int n, k, i, j, l, p;
  double t, h, Tmax;
  double *x, *x_err, *dydt_in, *dydt_out, *f, *swap, *a, *b;
  double *alpha, *beta,*temporary_wall,*alpha_inter;
@@ -1138,6 +1140,11 @@ free(several_constants);// exit(1);
  free (x);
  free (a);
  free (b);
+
+end = clock();
+cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+ 
+ printf("\nexecTime --> %lf ", cpu_time_used);
 
  return 0;
 }
