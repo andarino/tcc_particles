@@ -6,4 +6,4 @@ libgsl-dev;
 
 ### Para executar:
 
-> ./auto.sh -std=c11 -lgsl -lgslcblas -lm -pg
+> ./autotestes.sh -std=c11 -lgsl -lgslcblas -lm -pg
