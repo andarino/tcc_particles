@@ -1,5 +1,5 @@
 # tcc_particles
-Estudo sobre a performance de diversos compiladores sobre um problemas de sistemas dinâmicos.
+Estudo sobre a performance de diversos compiladores sobre um problema de sistemas dinâmicos.
 
 ## Software Requirements
 libgsl-dev;
