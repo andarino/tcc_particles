@@ -24,21 +24,17 @@ elif [ -e dowloading_wall_restitution_GPU3 ]
 then 
 	echo "[!] removendo arquivo dowloading_wall_restitution_GPU3 existente "
 	rm dowloading_wall_restitution_GPU3
-
 else 
 	echo  "[x] Nenhum executável para ser removido !!!"
 fi
 
 echo "[!] compilando O1, O2, O3 com os parametro: $*"
 
-OPT1=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU1 $* -O1 `
+OPT1=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU1 $* -O1`
 
 OPT2=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU2 $* -O2`
 
 OPT3=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU3 $* -O3`
-
-echo "[!] executando o programa 10 vezes com casa 'O' "
-echo "[!] Aguarde ... "
 
 if [ -d "time" ]; then 
 	rm -r time/
@@ -48,6 +44,9 @@ else
 fi
 
 #***************************************************************
+echo "[!] executando o programa 10 vezes com a flag 'O1' "
+echo "[!] Aguarde ... "
+
 echo "PARAMETROS USADOS: $*" > time/dataO1.txt
 echo " "
 
@@ -60,6 +59,9 @@ done
 echo "[v] tempos salvos em 'time/dataO1'"
 
 #***************************************************************
+echo "[!] executando o programa 10 vezes com flag 'O2' "
+echo "[!] Aguarde ... "
+
 echo "PARAMETROS USADOS: $*" > time/dataO2.txt
 echo " "
 for i in $(seq 10);
@@ -71,6 +73,8 @@ done
 echo "[v] tempos salvos em 'time/dataO2'"
 
 #***************************************************************
+echo "[!] executando o programa 10 vezes com flag 'O3' "
+echo "[!] Aguarde ... "
 
 echo "PARAMETROS USADOS: $*" > time/dataO3.txt
 echo " "
