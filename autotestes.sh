@@ -1,7 +1,6 @@
-#!/usr/bin/bash
 
 case $1 in
-"-h") echo "./auto.sh [param]"
+"-h") echo "./auto.sh [param]"; echo "ex: ./autotestes.sh -std=c11 -lgsl -lgslcblas -lm -pg"
 exit 0
 ;;
 "-v") echo "hilarious version"
@@ -9,104 +8,81 @@ exit 0
 ;;
 esac
 
+if [ -z $1 ]; then 
+	echo "[!] Informe parametros para compilacao [!]"
+	echo "ex: ./autotestes.sh -std=c11 -lgsl -lgslcblas -lm -pg"
+	exit 0
+fi 
 
-if [ -e dowloading_wall_restitution_GPU1 ]
+if [ -e downloading_wall_restitution_GPU1 ]
 then 
-	echo "[!] removendo arquivo dowloading_wall_restitution_GPU1 existente "
-	rm dowloading_wall_restitution_GPU1
+	echo "[!] removendo arquivo downloading_wall_restitution_GPU1 existente "
+	rm downloading_wall_restitution_GPU1
 
-elif [ -e dowloading_wall_restitution_GPU2 ] 
+elif [ -e downloading_wall_restitution_GPU2 ] 
 then 
-	echo "[!] removendo arquivo dowloading_wall_restitution_GPU2 existente "
-	rm dowloading_wall_restitution_GPU2
+	echo "[!] removendo arquivo downloading_wall_restitution_GPU2 existente "
+	rm downloading_wall_restitution_GPU2
 
-elif [ -e dowloading_wall_restitution_GPU3 ] 
+elif [ -e downloading_wall_restitution_GPU3 ] 
 then 
-	echo "[!] removendo arquivo dowloading_wall_restitution_GPU3 existente "
-	rm dowloading_wall_restitution_GPU3
+	echo "[!] removendo arquivo downloading_wall_restitution_GPU3 existente "
+	rm downloading_wall_restitution_GPU3
 else 
 	echo  "[x] Nenhum executável para ser removido !!!"
 fi
 
-echo "[!] compilando O1, O2, O3 com os parametro: $*"
+echo "[!] compilando -O1, -O2, -O3 com os parametro: $*"
 
-OPT1=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU1 $* -O1`
+OPT1=`gcc downloading_wall_restitution_GPU.c -o downloading_wall_restitution_GPU1 $* -O1`
 
-OPT2=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU2 $* -O2`
+OPT2=`gcc downloading_wall_restitution_GPU.c -o downloading_wall_restitution_GPU2 $* -O2`
 
-OPT3=`gcc dowloading_wall_restitution_GPU.c -o dowloading_wall_restitution_GPU3 $* -O3`
+OPT3=`gcc downloading_wall_restitution_GPU.c -o downloading_wall_restitution_GPU3 $* -O3`
 
-if [ -d "time" ]; then 
-	rm -r time/
-	mkdir time
-else 
-	mkdir time
-fi
+test -d "time" || mkdir -m 700 time
 
 #***************************************************************
 echo "[!] executando o programa 10 vezes com a flag 'O1' "
 echo "[!] Aguarde ... "
 
-echo "PARAMETROS USADOS: $*" > time/dataO1.txt
+echo "PARAMETROS USADOS: $*" > time/gcctimeO1.txt
 echo " "
 
 for i in $(seq 10);
  do
-  ./dowloading_wall_restitution_GPU1 0.0001 8 10 0.09 >> time/dataO1.txt
-	echo "=============================================================" >> time/dataO1.txt
+  ./downloading_wall_restitution_GPU1 0.0001 8 10 0.09 >> time/gcctimeO1.txt
+	echo "=============================================================" >> time/gcctimeO1.txt
   sleep 5
 done
-echo "[v] tempos salvos em 'time/dataO1'"
+echo "[v] tempos salvos em 'time/gcctimeO1'"
 
 #***************************************************************
 echo "[!] executando o programa 10 vezes com flag 'O2' "
 echo "[!] Aguarde ... "
 
-echo "PARAMETROS USADOS: $*" > time/dataO2.txt
+echo "PARAMETROS USADOS: $*" > time/gcctimeO2.txt
 echo " "
 for i in $(seq 10);
  do
-   ./dowloading_wall_restitution_GPU2 0.0001 8 10 0.09 >> time/dataO2.tx
-   echo "=============================================================" >> time/dataO2.txt
+   ./downloading_wall_restitution_GPU2 0.0001 8 10 0.09 >> time/gcctimeO2.txt
+   echo "=============================================================" >> time/gcctimeO2.txt
    	sleep 5
 done
-echo "[v] tempos salvos em 'time/dataO2'"
+echo "[v] tempos salvos em 'time/gcctimeO2'"
 
 #***************************************************************
 echo "[!] executando o programa 10 vezes com flag 'O3' "
 echo "[!] Aguarde ... "
 
-echo "PARAMETROS USADOS: $*" > time/dataO3.txt
+echo "PARAMETROS USADOS: $*" > time/gcctimeO3.txt
 echo " "
 for i in $(seq 10);
  do
-   ./dowloading_wall_restitution_GPU3 0.0001 8 10 0.09 >> time/dataO3.txt
-   echo "=============================================================" >> time/dataO3.txt
+   ./downloading_wall_restitution_GPU3 0.0001 8 10 0.09 >> time/gcctimeO3.txt
+   echo "=============================================================" >> time/gcctimeO3.txt
  	sleep 5
  done
 
-echo "[v] tempos salvos em 'time/dataO3'"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "[v] tempos salvos em 'time/gcctimeO3'"
 
