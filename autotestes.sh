@@ -1,6 +1,6 @@
 
 case $1 in
-"-h") echo "./auto.sh [param]"; echo "ex: ./autotestes.sh -std=c11 -lgsl -lgslcblas -lm -pg"
+"-h") echo "./$0 [param]"; echo "ex: ./$0 { -std=c11  -lgsl -lgslcblas -lm -pg }"
 exit 0
 ;;
 "-v") echo "hilarious version"
