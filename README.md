@@ -1,14 +1,24 @@
-# tcc_particles
-Estudo sobre a performance de diversos compiladores sobre um problema de sistemas dinâmicos.
+# Simulador de interação de partículas
+Estudo sobre a performance de um problema de sistemas dinâmicos, usando yatuner.
 
-## Software Requirements
-libgsl-dev;
+### Instalando os requisitos:
+* Python 3.6 ou mais recente
+* GCC 9 ou mais recente
+* Instalar o framework yatuner (https://github.com/JuniMay/yatuner)
+* libgsl-dev
+* pip3 install requirements.txt 
+* Dica: crie um ambiente virtual com python (https://docs.python.org/3/tutorial/venv.html)
 
-
-### Compilar e executar:
+### Compilar somente o arquivo de simulação:
 > gcc downloading_wall_restitution_GPU.c -o downloading_wall_restitution_GPU -std=c11 -lgsl -lgslcblas -lm -pg -O3
 
+Executar:
 
 > ./downloading_wall_restitution_GPU 0.0001 8 10 0.09
+ 
 
-Nota: os parâmetros usado na execução do script são passados para a compilação do arquivo dowloading_wall_restitution_GPU.c
+
+Os parametros acima significam: `./downloading_wall_restitution_GPU` (tempo total) (graos na vertical) (graos na horizontal) (parâmetro de afilamento)
+
+### Executar o arquivo gerado pelo Yatuner
+> python tune.py
