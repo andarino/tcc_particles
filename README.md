@@ -1,4 +1,4 @@
-# Simulador de interação de partículas
+# Avaliador de interação de partículas
 Estudo sobre a performance de um problema de sistemas dinâmicos, usando yatuner.
 
 ## Instalando os requisitos:
