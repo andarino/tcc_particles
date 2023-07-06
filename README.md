@@ -22,4 +22,8 @@ Executar:
 
 * *./downloading_wall_restitution_GPU* (tempo total) (grãos na vertical) (grãos na horizontal) (parâmetro de afilamento)
 
+## Execução do arquivo de Tunning
+
+> python 
+ 
 Ao executar o tunning da aplicação um diretório `yatuner-db/` será formado, este diretório contém os parâmetros selecionados pelo framework para melhor performance do algorítmo, além de algumas outras peças para análise.
