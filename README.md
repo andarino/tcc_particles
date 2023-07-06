@@ -9,7 +9,7 @@ Estudo sobre a performance de um problema de sistemas dinâmicos, usando yatuner
 * pip3 install requirements.txt 
 * Dica: crie um ambiente virtual com python (https://docs.python.org/3/tutorial/venv.html)
 
-## Instruções para execução
+## Instruções para execução do programa de simulação
 
 Caso queira executar somente o arquivo de simulação:
 > gcc downloading_wall_restitution_GPU.c -o downloading_wall_restitution_GPU -std=c11 -lgsl -lgslcblas -lm -pg -O3
