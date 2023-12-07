@@ -44,9 +44,11 @@ class Tuner:
                  workspace='yatuner.db',
                  log_level=logging.DEBUG,
                  norm_range=None,
-                 u=0,
-                 std=0,
-                 deterministic=False) -> None:
+                 deterministic=False,
+                 u=None,
+                 z=None,
+                 std=None,
+                 exec_data=None) -> None:
         """A tuner.
 
         Args:
@@ -69,6 +71,10 @@ class Tuner:
         self.logger = logging.getLogger('yatuner')
         self.logger.setLevel(log_level)
 
+        self.exec_data=exec_data
+        self.u=u
+        self.z=z   
+        self.std=std #desvio padrao
 
         self.call_compile = call_compile
         self.call_running = call_running
@@ -141,9 +147,21 @@ class Tuner:
                 self.exec_data = np.sort(
                     self.exec_data
                 )[:int(len(self.exec_data) * self.norm_range)]
+                '''
+                calcular a média (ou a média aritmética) de um conjunto de dados. 
+                A média é uma medida estatística que representa o valor central de um conjunto de números.   
+                '''
             self.u = np.mean(self.exec_data)
+            '''
+            o desvio padrão de um conjunto de dados. O desvio padrão é uma medida de dispersão 
+            que indica o quão dispersos estão os valores em relação à média.
+            '''
             self.std = np.std(self.exec_data)
-            kstest = stats.kstest(self.exec_data.argmax(), 'norm', (self.u, self.std))
+            #---truque para fazer a linha 156 compilar
+            au = np.array([self.exec_data.argmax()])
+            amostra_float = au.astype(float)
+            #---
+            kstest = stats.kstest(amostra_float, 'norm', (self.u, self.std))
 
             self.logger.info(
                 f"test run finished with u: {self.u:.2f}, std: {self.std:.2f}")
@@ -229,11 +247,23 @@ class Tuner:
 
             if not self.deterministic:
                 samples_mean = samples.mean()
-                print('valor de sample_mean ', samples_mean)
-                print('valor de self u ', self.u)
                 z = (samples_mean - self.u) / (self.std / np.sqrt(len(samples)))
+                '''
+                A função stats.norm.sf é parte do módulo scipy.stats em Python e é utilizada 
+                para calcular a função de sobrevivência (também conhecida como complemento da 
+                função de distribuição acumulativa) de uma distribuição normal (gaussiana).
+
+                A função de sobrevivência em um ponto x de uma distribuição é a probabilidade de que a 
+                variável aleatória seja maior que x. Matematicamente, para uma distribuição normal, 
+                isso pode ser expresso como:
+                '''
                 p = 2 * stats.norm.sf(abs(z))
-                t = stats.ttest_1samp(samples, self.u).pvalue
+
+                '''Executa Ela é usada para realizar um teste t de uma amostra. 
+                Um teste t de uma amostra é um teste estatístico usado para determinar 
+                se a média de uma única amostra é significativamente diferente de uma média populacional conhecida ou hipotética.
+                '''
+                t = stats.ttest_1samp(samples, self.u).pvalue 
 
                 self.logger.debug(f"{i}/{len(self.optimizers)} {optimizer} "
                                   f"u: {self.u:.2f} -> {samples_mean:.2f}, "
@@ -318,7 +348,7 @@ class Tuner:
             # bins = np.arange(bin_min, bin_max + 500, 500)
             plt.hist(
                 self.exec_data,
-                #  bins=bins,
+                #bins=bins,
                 density=True,
                 alpha=0.5,
                 label='test run')
@@ -446,7 +476,7 @@ class Tuner:
                         num_samples=10,
                         num_bins=25,
                         nth_choice=3,
-                        metric='cpu-cycles') -> None:
+                        metric='duration_time') -> None:
         """Optimize selected parameters with linUCB."""
         if self.deterministic and num_samples != 1:
             self.logger.warning(f"num_samples of {num_samples} "
@@ -744,7 +774,7 @@ class Tuner:
             for i in track(range(num_samples), description='   -O2'):
                 res = self.call_running()
                 samples_o2[i] = res
-                    
+
         self.call_compile(None, None, '-O3')
         if self.deterministic:
             res = self.call_running()
